@@ -1,0 +1,401 @@
+*,
+:before,
+:after {
+    box-sizing: border-box;
+    position: relative;
+}
+
+body,
+html,
+.app,
+.game.stretch {
+    color: #fff;
+    font-family: arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.starry-night {
+    background-color:black;
+    background-image:
+        -webkit-radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px), -webkit-radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px), -webkit-radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px), -webkit-radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+    background-image:
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+        radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+    background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+    background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+}
+
+.drill {
+    display: block;
+    background: #000;
+    position: absolute;
+}
+
+.engine-fire {
+    background: orange;
+    border-radius: 100%;
+}
+
+.stats-panel {
+    opacity: 0;
+    -webkit-transition: 0.3s opacity linear;
+            transition: 0.3s opacity linear;
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    padding: 10px 15px;
+    border: 2px solid #444;
+    border-radius: 0 0 10px 10px;
+    background: #222;
+    color: #bbb;
+}
+
+.loaded .stats-panel {
+    opacity: 1;
+}
+.view {
+    position: absolute;
+    margin: 0 auto;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate3d(-50%, -50%, 0) scale(0.25);
+            transform: translate3d(-50%, -50%, 0) scale(0.25);
+    background: #111;
+    overflow: hidden;
+    border-radius: 100%;
+    opacity: 0;
+    -webkit-transition: 1s opacity linear, 1.5s -webkit-transform linear;
+            transition: 1s opacity linear, 1.5s transform linear;
+
+}
+.view:before {
+    content: "";
+    display: block;
+    width: 105%;
+    height: 105%;
+    position: absolute;
+    margin: 0 auto;
+    top: -3%;
+    left: -3%;
+    background: -webkit-radial-gradient(center, ellipse, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,1) 80%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.95) 35%,rgba(0,0,0,1) 80%);
+    background-size: cover;
+    z-index: 14;
+    pointer-events: none;
+}
+.loaded .view {
+    -webkit-transform: translate3d(-50%, -50%, 0) scale(1);
+            transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 1;
+}
+.game-over .view:after {
+    content: "Game Over";
+    font-size: 2vw;
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%);
+            transform: translate(-50%);
+    z-index: 200;
+    pointer-events: none;
+}
+
+.stage {
+    position: absolute;
+    background: #eee;
+}
+
+.entity {
+    position: absolute;
+    z-index: 1;
+}
+.tile {
+    z-index: 10;
+}
+.tile.style-1 {
+    background: #555;
+}
+.tile.style-2 {
+    background: #222;
+}
+
+.tile-2 {
+    z-index: 10;
+    border: 1px solid transparent;
+}
+
+.tile-2:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transition: 3.4s -webkit-transform linear, 0.6s opacity linear, 0.4s background-color linear;
+            transition: 3.4s transform linear, 0.6s opacity linear, 0.4s background-color linear;
+    opacity: 1;
+}
+
+.tile-2.style-1:before {
+    background: #ccc;
+}
+
+.tile-2.style-2:before {
+    background: #aaa;
+}
+
+.tile-2.mined {
+    border: 0;
+    z-index: 2000;
+    -webkit-transform: scale(5);
+            transform: scale(5);
+}
+
+.tile-2.mined:before {
+    background: red;
+    -webkit-transform: scale(5);
+            transform: scale(5);
+    border-radius: 100%;
+}
+
+.tile-2.flagged {
+    border: 0;
+}
+
+.tile-2.flagged:before {
+    background: green;
+}
+
+.tile-2.hidden:before {
+    opacity: 0;
+}
+
+.tile-2.bip:after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -5px;
+    margin-top: -7px;
+    width: 10px;
+    height: 15px;
+    background: yellow;
+    border: 1px solid #000;
+}
+
+.tile-2.shake:before, .tile-2.flagged:before {
+    -webkit-animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+            perspective: 1000px;
+}
+
+.tile-2.microbial, .tile-2.flagged:before {
+    background:
+            -webkit-radial-gradient(0% 50%, circle, rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px) 0px 10px, -webkit-radial-gradient(at 100% 100%, rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px), #8a3;
+    background:
+            radial-gradient(circle at 0% 50%, rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px) 0px 10px,
+            radial-gradient(at 100% 100%,      rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px),
+            #8a3;
+    background-size: 20px 20px;
+}
+
+.tile-2.exit:after {
+    content: "";
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    border: 5px solid green;
+    border-radius: 100%;
+}
+
+.tile-2.reached:after {
+    background: green;
+}
+
+@-webkit-keyframes shake {
+  10%, 90% {
+    -webkit-transform: translate3d(-1px, 0, 0);
+            transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    -webkit-transform: translate3d(2px, 0, 0);
+            transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    -webkit-transform: translate3d(-4px, 0, 0);
+            transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    -webkit-transform: translate3d(4px, 0, 0);
+            transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes shake {
+  10%, 90% {
+    -webkit-transform: translate3d(-1px, 0, 0);
+            transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    -webkit-transform: translate3d(2px, 0, 0);
+            transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    -webkit-transform: translate3d(-4px, 0, 0);
+            transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    -webkit-transform: translate3d(4px, 0, 0);
+            transform: translate3d(4px, 0, 0);
+  }
+}
+.level-select {
+    position: absolute;
+    height: auto;
+    width: 50%;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    opacity: 0;
+    color: #bbb;
+}
+.animating .level-select {
+    -webkit-transition: 0.4s opacity linear;
+            transition: 0.4s opacity linear;
+}
+.loaded .level-select {
+    opacity: 1;
+}
+.level-select .levels {
+    overflow: hidden;
+    border-color: #444;
+    border-style: solid;
+    border-width: 3px 2px;
+    border-radius: 10px;
+    font-size: 5vmin;
+}
+.level-select .level {
+    cursor: default;
+    padding: 2vh;
+    border-top: 2px solid #444;
+    background-color: rgba(34, 34, 34, 1);
+    -webkit-transition: 0.3s background-color linear;
+            transition: 0.3s background-color linear;
+}
+.level-select .level:first-child {
+    border: 0;
+}
+.level-select .level:hover {
+    background-color: rgba(110,110,110, 0.5);
+}
+.loaded .level-select .level {
+    cursor: pointer;
+}
+.level-select .stats-panel {
+    top: 100%;
+    margin-top: -4px;
+}
+.player {
+    background: blue;
+    border-radius: 27%;
+}
+.player.near-mine:before{
+    content: "";
+    display: block;
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    left: 30%;
+    top: 30%;
+    background: red;
+    border-radius: 100%;
+    z-index: 200;
+}
+.player:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: purple;
+    z-index: 100;
+    border-radius: 100%;
+}
+.player.shake:after, .player.shake:before {
+    -webkit-animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+            perspective: 1000px;
+}
+.proximity-mine {
+    z-index: 2;
+}
+.proximity-mine:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transition: 1.4s -webkit-transform linear, 0.6s opacity linear;
+            transition: 1.4s transform linear, 0.6s opacity linear;
+    opacity: 1;
+    background-color: maroon;
+    border-radius: 5%;
+    background: -webkit-radial-gradient(center, ellipse, rgba(30,52,73,1) 0%, rgba(106,158,201,1) 39%, rgba(122,23,34,1) 51%, rgba(107,142,198,1) 68%, rgba(64,73,89,1) 100%);
+    background: radial-gradient(ellipse at center, rgba(30,52,73,1) 0%,rgba(106,158,201,1) 39%,rgba(122,23,34,1) 51%,rgba(107,142,198,1) 68%,rgba(64,73,89,1) 100%);
+}
+.proximity-mine.mined {
+    z-index: 2000;
+}
+.proximity-mine.mined:before {
+    background: red;
+    -webkit-transform: scale(10);
+            transform: scale(10);
+    border-radius: 100%;
+}
+.proximity-mine.destroyed {
+    opacity: 0;
+}
+.proximity-mine.shake:before {
+    -webkit-animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+            perspective: 1000px;
+}
+
+/*# sourceMappingURL=maps/app.css.map */

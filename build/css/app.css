@@ -8,7 +8,8 @@
 body,
 html,
 .app,
-.game.stretch {
+.game.stretch,
+.tile-level {
     color: #fff;
     font-family: arial, sans-serif;
     text-align: center;
@@ -72,7 +73,6 @@ html,
     opacity: 0;
     -webkit-transition: 1s opacity linear, 1.5s -webkit-transform linear;
             transition: 1s opacity linear, 1.5s transform linear;
-
 }
 .view:before {
     content: "";
@@ -106,24 +106,106 @@ html,
     z-index: 200;
     pointer-events: none;
 }
+.game-over-reset .view:after {
+    content: "Derp.";
+    font-size: 2vw;
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -60%);
+            transform: translate(-50%, -60%);
+    z-index: 200;
+    pointer-events: none;
+}
+.game-over-win .view:after {
+    content: "Wrecked it.";
+    font-size: 2vw;
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -60%);
+            transform: translate(-50%, -60%);
+    z-index: 200;
+    pointer-events: none;
+}
 
 .stage {
     position: absolute;
     background: #eee;
 }
 
-.entity {
+.entity,
+.tile {
     position: absolute;
     z-index: 1;
 }
-.tile {
+.tile-1 {
     z-index: 10;
 }
-.tile.style-1 {
+.tile-1.style-1 {
+    background: #555;
+    border: 5px dashed #fff;
+}
+.tile-1.style-1.doorway:before, .tile-1.style-1.doorway:after {
     background: #555;
 }
-.tile.style-2 {
+.tile-1.style-2 {
     background: #222;
+    border: 5px dashed #fff;
+}
+.tile-1.style-2.doorway:before, .tile-1.style-2.doorway:after {
+    background: #222;
+}
+.tile-1.style-1.doorway, .tile-1.style-2.doorway {
+    background: transparent;
+    border: 0;
+}
+.tile-1.style-1.doorway:before, .tile-1.style-1.doorway:after, .tile-1.style-2.doorway:before, .tile-1.style-2.doorway:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+}
+.tile-1.style-1.doorway.north-south:before, .tile-1.style-2.doorway.north-south:before {
+    width: 25%;
+    left: 0;
+}
+.tile-1.style-1.doorway.north-south:after, .tile-1.style-2.doorway.north-south:after {
+    width: 25%;
+    right: 0;
+}
+.tile-1.style-1.doorway.east-west:before, .tile-1.style-2.doorway.east-west:before {
+    height: 25%;
+    top: 0;
+    left: 0;
+}
+.tile-1.style-1.doorway.east-west:after, .tile-1.style-2.doorway.east-west:after {
+    height: 25%;
+    bottom: 0;
+    left: 0;
+}
+.tile-1 .door {
+    z-index: 1;
+}
+.tile-1 .door:before {
+    background: yellow;
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border: 1px solid #000;
+}
+.tile-1 .door.east-west:before {
+    border-left: 4px solid black;
+    border-right: 4px solid black;
+}
+.tile-1 .door.north-south:before {
+    border-top: 4px solid black;
+    border-bottom: 4px solid black;
 }
 
 .tile-2 {
@@ -193,17 +275,6 @@ html,
     border: 1px solid #000;
 }
 
-.tile-2.shake:before, .tile-2.flagged:before {
-    -webkit-animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
-            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
-    -webkit-transform: translate3d(0, 0, 0);
-            transform: translate3d(0, 0, 0);
-    -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-    -webkit-perspective: 1000px;
-            perspective: 1000px;
-}
-
 .tile-2.microbial, .tile-2.flagged:before {
     background:
             -webkit-radial-gradient(0% 50%, circle, rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px) 0px 10px, -webkit-radial-gradient(at 100% 100%, rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px), #8a3;
@@ -229,47 +300,86 @@ html,
     background: green;
 }
 
+.tile-2 .switch:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 10%;
+    border: 2px solid #333;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+            perspective: 1000px;
+    background: yellow;
+}
+
+.tile-2 .switch.unflipped:before {
+    -webkit-animation: shake 0.22s cubic-bezier(.36,.07,.19,.97) 0.001s both;
+            animation: shake 0.22s cubic-bezier(.36,.07,.19,.97) 0.001s both;
+}
+
+.tile-2 .switch.flipped:before {
+    background: lightblue;
+    -webkit-animation: shake 0.22s cubic-bezier(.36,.07,.19,.97) 0.001s both;
+            animation: shake 0.22s cubic-bezier(.36,.07,.19,.97) 0.001s both;
+}
+
+.tile-2.shake:before, .tile-2.shake:after, .tile-2.shake > *:before, .tile-2.flagged:before {
+    -webkit-animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+            perspective: 1000px;
+}
+
 @-webkit-keyframes shake {
   10%, 90% {
-    -webkit-transform: translate3d(-1px, 0, 0);
-            transform: translate3d(-1px, 0, 0);
+    -webkit-transform: translate3d(-1px, -1px, 0);
+            transform: translate3d(-1px, -1px, 0);
   }
 
   20%, 80% {
-    -webkit-transform: translate3d(2px, 0, 0);
-            transform: translate3d(2px, 0, 0);
+    -webkit-transform: translate3d(2px, 2px, 0);
+            transform: translate3d(2px, 2px, 0);
   }
 
   30%, 50%, 70% {
-    -webkit-transform: translate3d(-4px, 0, 0);
-            transform: translate3d(-4px, 0, 0);
+    -webkit-transform: translate3d(-4px, -4px, 0);
+            transform: translate3d(-4px, -4px, 0);
   }
 
   40%, 60% {
-    -webkit-transform: translate3d(4px, 0, 0);
-            transform: translate3d(4px, 0, 0);
+    -webkit-transform: translate3d(4px, 4px, 0);
+            transform: translate3d(4px, 4px, 0);
   }
 }
 
 @keyframes shake {
   10%, 90% {
-    -webkit-transform: translate3d(-1px, 0, 0);
-            transform: translate3d(-1px, 0, 0);
+    -webkit-transform: translate3d(-1px, -1px, 0);
+            transform: translate3d(-1px, -1px, 0);
   }
 
   20%, 80% {
-    -webkit-transform: translate3d(2px, 0, 0);
-            transform: translate3d(2px, 0, 0);
+    -webkit-transform: translate3d(2px, 2px, 0);
+            transform: translate3d(2px, 2px, 0);
   }
 
   30%, 50%, 70% {
-    -webkit-transform: translate3d(-4px, 0, 0);
-            transform: translate3d(-4px, 0, 0);
+    -webkit-transform: translate3d(-4px, -4px, 0);
+            transform: translate3d(-4px, -4px, 0);
   }
 
   40%, 60% {
-    -webkit-transform: translate3d(4px, 0, 0);
-            transform: translate3d(4px, 0, 0);
+    -webkit-transform: translate3d(4px, 4px, 0);
+            transform: translate3d(4px, 4px, 0);
   }
 }
 .level-select {
@@ -320,8 +430,9 @@ html,
     margin-top: -4px;
 }
 .player {
-    background: blue;
+    background: red;
     border-radius: 27%;
+    border: 2px solid #000;
 }
 .player.near-mine:before{
     content: "";
@@ -341,9 +452,12 @@ html,
     width: 100%;
     height: 100%;
     position: absolute;
-    background: purple;
+    background: #444;
     z-index: 100;
     border-radius: 100%;
+    -webkit-transform: scale(1.14);
+            transform: scale(1.14);
+    border: 2px dotted #ddd;
 }
 .player.shake:after, .player.shake:before {
     -webkit-animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite both;
@@ -375,6 +489,25 @@ html,
     background: -webkit-radial-gradient(center, ellipse, rgba(30,52,73,1) 0%, rgba(106,158,201,1) 39%, rgba(122,23,34,1) 51%, rgba(107,142,198,1) 68%, rgba(64,73,89,1) 100%);
     background: radial-gradient(ellipse at center, rgba(30,52,73,1) 0%,rgba(106,158,201,1) 39%,rgba(122,23,34,1) 51%,rgba(107,142,198,1) 68%,rgba(64,73,89,1) 100%);
 }
+.proximity-mine.attack {
+    background-color: red;
+}
+.proximity-mine.attack:before {
+    opacity: 0.4;
+}
+.proximity-mine.attack.child, .proximity-mine.attack.child:before {
+    border-radius: 100%;
+    opacity: 0.8;
+}
+.proximity-mine.attack.child:before {
+    opacity: 0.6;
+}
+.proximity-mine.mine-mom {
+    background-color: lightgreen;
+}
+.proximity-mine.mine-mom:before {
+    opacity: 0.3;
+}
 .proximity-mine.mined {
     z-index: 2000;
 }
@@ -396,6 +529,137 @@ html,
             backface-visibility: hidden;
     -webkit-perspective: 1000px;
             perspective: 1000px;
+}
+.tile-details,
+.tool-select {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #222;
+  color: #eee;
+  padding: 20px;
+}
+.tile-details h4, .tool-select h4 {
+    margin: 20px 0 0;
+}
+.tile-details h4:first-child, .tool-select h4:first-child {
+    margin-top: 0;
+}
+.tile-details div, .tool-select div {
+    padding: 10px 0 0;
+}
+.tile-details.no-details, .tool-select.no-details {
+    display: none;
+}
+.tile-details .hidden, .tool-select .hidden {
+    visibility: hidden;
+    height: 0;
+    position: absolute;
+}
+
+.tile-details {
+    min-width: 15%;
+}
+
+.tool-select {
+    right: auto;
+    left: 0;
+}
+
+.tool-select div {
+    padding: 10px;
+}
+.tile-grid {
+    background: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+}
+.tile-level .tile {
+    z-index: 10;
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    border-width: 1px;
+}
+.tile-level .tile-1.style-1 {
+    background: #555;
+}
+.tile-level .tile-1.style-1.doorway:before, .tile-level .tile-1.style-1.doorway:after {
+    background: #555;
+}
+.tile-level .tile-1.style-2 {
+    background: #222;
+}
+.tile-level .tile-1.style-2.doorway:before, .tile-level .tile-1.style-2.doorway:after {
+    background: #222;
+}
+.tile-level .tile-1.style-1.doorway, .tile-level .tile-1.style-2.doorway {
+    background: #fff;
+}
+.tile-level .tile-1.style-1.doorway:before, .tile-level .tile-1.style-1.doorway:after, .tile-level .tile-1.style-2.doorway:before, .tile-level .tile-1.style-2.doorway:after {
+    display: block;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.tile-level .tile-1.style-1.doorway.north-south:before, .tile-level .tile-1.style-2.doorway.north-south:before {
+    width: 28%;
+    left: 0;
+}
+.tile-level .tile-1.style-1.doorway.north-south:after, .tile-level .tile-1.style-2.doorway.north-south:after {
+    width: 28%;
+    right: 0;
+}
+.tile-level .tile-1.style-1.doorway.east-west:before, .tile-level .tile-1.style-2.doorway.east-west:before {
+    height: 28%;
+    top: 0;
+}
+.tile-level .tile-1.style-1.doorway.east-west:after, .tile-level .tile-1.style-2.doorway.east-west:after {
+    height: 28%;
+    bottom: 0;
+}
+.tile-level .tile-2.style-1:before {
+    background: #ccc;
+}
+.tile-level .tile-2.style-2:before {
+    background: #aaa;
+}
+.tile-level .tile-2.switch:after {
+    content: '';
+    display:block;
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top:50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    background: red;
+    border: 1px solid #666;
+}
+.tile-level .tile-2.switch:after.flipped {
+    background: green;
+}
+#play-level-button {
+    position: fixed;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    cursor: pointer;
+}
+.tool-select .tool {
+    cursor: pointer;
+}
+.tool-select .tool.active {
+    background: #fff;
+    color: #000;
 }
 
 /*# sourceMappingURL=maps/app.css.map */
